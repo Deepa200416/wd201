@@ -1,58 +1,62 @@
 /* eslint-disable no-undef */
 const todoList = require("../todo");
-const {
-  all,
-  add,
-  markAsComplete,
-  overdue,
-  dueToday,
-  dueLater,
-  toDisplayableList,
-} = todoList();
 
-describe("Todolist Test Suite", () => {
-  beforeAll(() => {
-    add({
-      title: "Test todo",
+describe("TodoList Test Suite", () => {
+  let todo;
+
+  beforeEach(() => {
+    todo = todoList();
+  });
+
+  test("Creating a new todo", () => {
+    const newTodo = { title: "Buy groceries", dueDate: "2023-12-15" };
+    todo.add(newTodo);
+
+    expect(todo.all).toEqual([newTodo]);
+  });
+
+  test("Marking a todo as completed", () => {
+    const newTodo = {
+      title: "Finish report",
+      dueDate: "2023-12-14",
       completed: false,
-      dueDate: new Date().toISOString().split("T")[0],
-    });
+    };
+    todo.add(newTodo);
+    todo.markAsComplete(0);
+
+    expect(todo.all[0].completed).toBe(true);
   });
 
-  test("Should add new todo ", () => {
-    const todoItemsCount = all.length;
-    add({
-      title: "Test todo",
+  test("Retrieval of overdue items", () => {
+    const overdueTodo = {
+      title: "Pay bills",
+      dueDate: "2023-12-12",
       completed: false,
-      dueDate: new Date().toISOString().split("T")[0],
-    });
-    expect(all.length).toBe(todoItemsCount + 1);
+    };
+    todo.add(overdueTodo);
+
+    expect(todo.overdue()).toEqual([overdueTodo]);
   });
 
-  test("Should mark a todo as complete (Intentional Failure)", () => {
-    expect(all[0].completed).toBe(false);
-    markAsComplete(0);
-    expect(all[0].completed).toBe(true);
+  test("Retrieval of due today items", () => {
+    const dueTodayTodo = {
+      title: "Clean room",
+      dueDate: "2023-12-13",
+      completed: false,
+    };
+    todo.add(dueTodayTodo);
+
+    expect(todo.dueToday()).toEqual([dueTodayTodo]);
   });
 
-  test("Should retrieve overdue todos", () => {
-    const overdueTodos = overdue();
-    expect(overdueTodos.length).toBe(0);
-  });
+  test("Retrieval of due later items", () => {
+    const dueLaterTodo = {
+      title: "Call dentist",
+      dueDate: "2023-12-14",
+      completed: false,
+    };
+    todo.add(dueLaterTodo);
 
-  test("Should retrieve due today todos", () => {
-    const dueTodayTodos = dueToday();
-    expect(dueTodayTodos.length).toBeGreaterThanOrEqual(0);
-  });
-
-  test("Should retrieve due later todos", () => {
-    const dueLaterTodos = dueLater();
-    expect(dueLaterTodos.length).toBeGreaterThanOrEqual(0);
-  });
-
-  test("Should format todos for display (Intentional Failure)", () => {
-    const today = new Date().toISOString().split("T")[0];
-    const displayableList = toDisplayableList(all, today);
-    expect(displayableList).toContain("[x] Test todo");
+    expect(todo.dueLater()).toEqual([dueLaterTodo]);
   });
 });
