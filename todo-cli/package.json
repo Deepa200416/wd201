@@ -5,13 +5,19 @@
   "main": "todo.js",
   "scripts": {
     "test": "jest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "format": "prettier --write ."
   },
   "lint-staged": {
     "*.js": [
       "eslint",
       "prettier --write ."
     ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm test"
+    }
   },
   "author": "Deepika <jayadeepa444@gmail.com>",
   "license": "ISC",
